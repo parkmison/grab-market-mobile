@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "grab-market-mobile",
+    "name": "미소마켓",
     "slug": "grab-market-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -13,9 +13,7 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
     },

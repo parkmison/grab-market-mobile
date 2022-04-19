@@ -13,10 +13,12 @@ import axios from "axios";
 import { API_URL } from "../config/constants";
 import Avatar from "../assets/icons/avatar.png";
 import dayjs from "dayjs";
+import ProductCard from "../components/productCard";
 /*import { ScrollView TouchableOpacity도 않1됌} from "react-native-web"; 이거 대체 왜 안됨? 버전 달라서?*/
 export default function ProductScreen(props) {
   const { id } = props.route.params;
   const [product, setProduct] = useState(null);
+  const [products, setProducts] = useState([]);
   useEffect(() => {
     axios
       .get(`${API_URL}/products/${id}`)
@@ -27,7 +29,15 @@ export default function ProductScreen(props) {
       .catch((error) => {
         console.error(error);
       });
-  }, []);
+    axios
+      .get(`${API_URL}/products/${id}/recommendation`)
+      .then((result) => {
+        setProducts(result.data.products);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, [id]);
 
   const onPressButton = () => {
     if (product.soldout !== 1) {
@@ -61,6 +71,19 @@ export default function ProductScreen(props) {
               {dayjs(product.createdAt).format("YYYY년 MM월 DD일")}
             </Text>
             <Text style={styles.productDescription}>{product.description}</Text>
+          </View>
+          <View style={styles.divider} />
+          <Text style={styles.recommendationHeadLine}>추천 상품</Text>
+          <View style={styles.recommendationSection}>
+            {products.map((product, index) => {
+              return (
+                <ProductCard
+                  product={product}
+                  key={index}
+                  navigation={props.navigation}
+                />
+              );
+            })}
           </View>
         </View>
       </ScrollView>
@@ -102,7 +125,7 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   divider: {
-    backgroundColor: "#e9ecef",
+    backgroundColor: "#ff0000",
     height: 1,
     marginVertical: 16,
   },
@@ -123,6 +146,7 @@ const styles = StyleSheet.create({
   productDescription: {
     marginTop: 16,
     fontSize: 17,
+    marginBottom: 32,
   },
   purchaseButton: {
     /*position: "absolute",*/
@@ -147,10 +171,18 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: "gray",
   },
+  recommendationSection: {
+    alignItems: "center",
+    marginTop: 16,
+    paddingBottom: 70,
+  },
+  recommendationHeadLine: {
+    fontSize: 30,
+  },
   scrollView: {
     height: "100%",
     width: "100%",
     alignSelf: "center",
-    margin: 20,
+    /*margin: 20,  스크롤뷰는 마진이 없어도 잘 작동함.. */
   },
 });
